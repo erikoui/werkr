@@ -2,10 +2,8 @@ version: "3.7"
 services:
   backend:
     build:
-      args:
-        - NODE_ENV=development
+      target: development
       context: backend
-    command: npm run start
     environment:
       - DATABASE_DB=werkr
       - DATABASE_USER=postgres
@@ -13,7 +11,7 @@ services:
       - DATABASE_HOST=db
       - NODE_ENV=development
     ports:
-      - 80:80
+      - 5000:5000
     secrets:
       - postgres_password
     volumes:
@@ -21,8 +19,8 @@ services:
       - ./backend/package.json:/api/package.json
       - ./backend/package-lock.json:/api/package-lock.json
     networks:
-      - client-side
-      - server-side
+      - app
+      - api
     depends_on:
       - db
 
@@ -31,14 +29,11 @@ services:
       context: werkr
       target: development
     ports:
-      - 3001:3001
+      - 3000:3000
     volumes:
       - ./werkr/src:/app/src:ro
-      - ./werkr:/app/node_modules
     networks:
-      - client-side
-    depends_on:
-      - backend
+      - app
 
   db:
     image: postgres:13-alpine
@@ -46,7 +41,7 @@ services:
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
     networks:
-      - server-side
+      - api
     ports:
       - 5433:5432
     volumes:
@@ -55,8 +50,8 @@ services:
       - postgres_password
 
 networks:
-  client-side: {}
-  server-side: {}
+  app: {}
+  api: {}
 
 volumes:
   backend-cache: {}
