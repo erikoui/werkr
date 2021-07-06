@@ -5,8 +5,8 @@ ENV NODE_ENV $NODE_ENV
 
 WORKDIR /api
 
-ARG PORT=80
-ENV PORT $PORT 
+ARG PORT=5000
+ENV PORT $PORT
 EXPOSE $PORT 5432
 
 COPY package.json /api/package.json
